@@ -1,0 +1,78 @@
+/* glassmorphism.css - Refined Subtle Glass UI Components */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px; /* Crisp minimal corners */
+  transition: transform 0.4s ease, border-color 0.4s ease, background 0.4s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.glass-panel:hover {
+  transform: translateY(-4px); /* Very subtle float */
+  border-color: var(--border-muted);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.glass-panel .content {
+  padding: 2.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Elegant Text */
+.glow-text {
+  /* Removed aggressive neon, added subtle soft elegant glow */
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Card Grid Layouts */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 3rem; /* Cleaner spacing */
+  margin-top: 3rem;
+}
+
+/* Subtle Inputs */
+.glass-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-muted);
+  padding: 0.8rem 0;
+  color: var(--accent-light);
+  font-family: var(--font-main);
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.glass-input:focus {
+  border-bottom-color: var(--accent-light);
+}
+.input-group {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+.input-group label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+/* Typography Badge Elements - Muted style */
+.glass-badge {
+  display: inline-block;
+  padding: 0.3em 0.8em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 2px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}

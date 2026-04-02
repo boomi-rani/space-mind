@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Programs | SpaceMinds</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/glassmorphism.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <style>
+    .program-card { display: flex; flex-direction: column; height: 100%; border: 1px solid var(--border-subtle); background: rgba(255,255,255,0.01); }
+    .features-list { margin: 1.5rem 0; padding-left: 0; flex-grow: 1; }
+    .features-list li { margin-bottom: 0.8rem; position: relative; padding-left: 1.5rem; font-size: 0.95rem; color: var(--text-secondary); }
+    .features-list li::before { content: "—"; color: var(--text-primary); position: absolute; left: 0; }
+  </style>
+</head>
+<body>
+  <canvas id="starfield-canvas"></canvas>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo"></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="programs.html" class="active">Programs</a>
+        <a href="workshops.html">Workshops</a>
+        <a href="store.html">Store</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; margin-left: 1rem;">Sign In</a>
+      </div>
+      <button class="mobile-menu-btn">☰</button>
+    </div>
+  </nav>
+
+  <section class="section-padding" style="padding-top: 150px;">
+    <div class="container text-center reveal mb-5">
+      <h1>Teen Engineering Pathways</h1>
+      <p style="max-width: 600px; margin: 0 auto;">High school programs that feel like real aerospace jobs. No boring textbook reading—just building, coding, and solving big challenges.</p>
+    </div>
+
+    <div class="container grid-container">
+      <!-- Program 1 -->
+      <div class="glass-panel program-card reveal">
+        <div style="padding: 2.5rem 2rem 0; text-align:center;">
+          <img src="assets/images/ai_satellite.png" alt="Orbital Mechanics" onerror="this.style.display='none'" style="border-radius: 50%; width: 90px; height: 90px; object-fit: cover; margin: 0 auto; border: 1px solid var(--border-subtle);">
+        </div>
+        <div class="content">
+          <div class="glass-badge">Grade 9-12</div>
+          <h3>Learn Orbital Mechanics</h3>
+          <p style="font-size: 0.95rem;">Have you ever wondered how rockets actually reach the moon? Learn the physics of spaceflight using interactive web simulations.</p>
+          <ul class="features-list">
+            <li>Astrodynamics 101</li>
+            <li>Hohmann Transfer calculations</li>
+            <li>Spaceflight Simulation Labs</li>
+          </ul>
+          <button class="btn btn-secondary open-reg-modal" style="width: 100%;">Register</button>
+        </div>
+      </div>
+      
+      <!-- Program 2 -->
+      <div class="glass-panel program-card reveal">
+        <div style="padding: 2.5rem 2rem 0; text-align:center;">
+          <div style="width: 90px; height: 90px; line-height: 90px; border-radius: 50%; margin: 0 auto; border: 1px solid var(--border-subtle); font-size: 2rem;">⚙</div>
+        </div>
+        <div class="content">
+          <div class="glass-badge">Grade 10-12</div>
+          <h3>Planetary Robotics</h3>
+          <p style="font-size: 0.95rem;">Get hands-on and write code to guide a real Mars Rover. Combine computer science with physical engineering.</p>
+          <ul class="features-list">
+            <li>Intro to C++ programming</li>
+            <li>Working with LiDAR sensors</li>
+            <li>Autonomous movement logic</li>
+          </ul>
+          <button class="btn btn-primary open-reg-modal" style="width: 100%;">Register</button>
+        </div>
+      </div>
+
+      <!-- Program 3 -->
+      <div class="glass-panel program-card reveal">
+        <div style="padding: 2.5rem 2rem 0; text-align:center;">
+          <img src="assets/images/astronaut_minimal.png" alt="Habitats" onerror="this.style.display='none'" style="border-radius: 50%; width: 90px; height: 90px; object-fit: cover; margin: 0 auto; border: 1px solid var(--border-subtle);">
+        </div>
+        <div class="content">
+          <div class="glass-badge">Grade 9-11</div>
+          <h3>Living in Deep Space</h3>
+          <p style="font-size: 0.95rem;">Explore the biology and engineering needed to survive in an alien environment like the ISS or a Moon base.</p>
+          <ul class="features-list">
+            <li>Air and Water Recycling Systems</li>
+            <li>Radiation shielding basics</li>
+            <li>Space psychology</li>
+          </ul>
+          <button class="btn btn-secondary open-reg-modal" style="width: 100%;">Register</button>
+        </div>
+      </div>
+
+       <!-- Program 4 -->
+       <div class="glass-panel program-card reveal">
+        <div style="padding: 2.5rem 2rem 0; text-align:center;">
+          <img src="assets/images/rocket_sleek.png" alt="Propulsion" onerror="this.style.display='none'" style="border-radius: 50%; width: 90px; height: 90px; object-fit: cover; margin: 0 auto; border: 1px solid var(--border-subtle);">
+        </div>
+        <div class="content">
+          <div class="glass-badge">Grade 11-12</div>
+          <h3>Rocket Engine Design</h3>
+          <p style="font-size: 0.95rem;">An advanced track where you study the exact thermodynamic engines used by modern rocket companies.</p>
+          <ul class="features-list">
+            <li>Engine Thermodynamics</li>
+            <li>Ion Thruster logic</li>
+            <li>Rocket fuel chemistry</li>
+          </ul>
+          <button class="btn btn-secondary open-reg-modal" style="width: 100%;">Register</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Registration Modal -->
+  <div class="modal-overlay" id="reg-modal">
+    <div class="modal-content">
+      <button class="close-modal" id="close-modal">&times;</button>
+      
+      <div id="reg-form-container">
+        <h2 style="margin-bottom: 2rem;">Program Registration</h2>
+        <form id="reg-form">
+          <div class="input-group">
+            <label>Student Full Name</label>
+            <input type="text" class="glass-input" required placeholder="Jane Doe">
+          </div>
+          <div class="input-group">
+            <label>Parent/Student Email</label>
+            <input type="email" class="glass-input" required placeholder="contact@example.com">
+          </div>
+          <div class="input-group">
+            <label>Grade Level</label>
+            <select class="glass-input" style="background: var(--bg-primary); border: 1px solid var(--border-muted); padding:0.8rem;">
+              <option>9th Grade</option>
+              <option>10th Grade</option>
+              <option>11th Grade</option>
+              <option>12th Grade</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Complete Registration</button>
+        </form>
+      </div>
+
+      <div id="reg-success" class="success-message">
+        <h3 style="font-size: 2rem;">✅ Registered!!</h3>
+        <p>We will contact you soon with the syllabus and your login credentials.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo" style="height: 45px; margin-bottom: 1.5rem;">
+        <p style="font-size: 0.95rem;">Inspiring the next generation of space pioneers.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SpaceMinds. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/starfield.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    // Modal Logic
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('reg-modal');
+      const closeBtn = document.getElementById('close-modal');
+      const regForm = document.getElementById('reg-form');
+      const formContainer = document.getElementById('reg-form-container');
+      const successMsg = document.getElementById('reg-success');
+      
+      document.querySelectorAll('.open-reg-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+          modal.classList.add('active');
+          formContainer.style.display = 'block';
+          successMsg.style.display = 'none';
+          regForm.reset();
+        });
+      });
+
+      closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+      regForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        formContainer.style.display = 'none';
+        successMsg.style.display = 'block';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | SpaceMinds</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/glassmorphism.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <style>
+    .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .auth-box { width: 100%; max-width: 400px; padding: 3rem; border: 1px solid var(--border-subtle); background: var(--bg-primary); border-radius: 8px;}
+  </style>
+</head>
+<body>
+  <canvas id="starfield-canvas"></canvas>
+
+  <a href="index.html" style="position: absolute; top: 20px; left: 20px; z-index: 100;">
+    <img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo" style="height: 35px;">
+  </a>
+
+  <div class="auth-container">
+    <div class="auth-box reveal">
+      
+      <div class="text-center mb-5">
+        <h2>Log In</h2>
+        <p style="font-size: 0.95rem; margin-top: 0.5rem;">Access your student dashboard.</p>
+      </div>
+
+      <form onsubmit="event.preventDefault(); window.location.href='index.html';">
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" class="glass-input" required placeholder="student@school.edu">
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" class="glass-input" required>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; margin-bottom: 2rem; font-size: 0.9rem;">
+          <label style="color: var(--text-secondary);"><input type="checkbox"> Remember me</label>
+          <a href="#" style="color: var(--text-primary); text-decoration: underline;">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+      </form>
+      
+      <div class="text-center" style="margin-top: 2rem; font-size: 0.9rem;">
+        <span style="color: var(--text-secondary);">Don't have an account?</span> <a href="#" style="color: var(--text-primary); text-decoration: underline; font-weight: 500;">Create one</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="assets/js/starfield.js"></script>
+</body>
+</html>

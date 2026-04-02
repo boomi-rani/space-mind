@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Contact Us | SpaceMinds</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/glassmorphism.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body>
+  <canvas id="starfield-canvas"></canvas>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo"></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="programs.html">Programs</a>
+        <a href="workshops.html">Workshops</a>
+        <a href="store.html">Store</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" class="active">Contact</a>
+        <a href="auth.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; margin-left: 1rem;">Sign In</a>
+      </div>
+      <button class="mobile-menu-btn">☰</button>
+    </div>
+  </nav>
+
+  <section class="section-padding container" style="padding-top: 150px; max-width: 800px;">
+    <div class="text-center reveal mb-5">
+      <h1>Contact Us</h1>
+      <p>Have questions about bulk school orders or our curriculum? We would love to hear from you.</p>
+    </div>
+
+    <div class="glass-panel reveal" style="padding: 3rem; background: var(--bg-primary); border: 1px solid var(--border-subtle);">
+        <form id="contact-form" onsubmit="event.preventDefault(); alert('Message Sent Successfully!');">
+          
+          <div style="display:flex; gap: 2rem;">
+              <div class="input-group" style="flex:1;">
+                <label>First Name</label>
+                <input type="text" class="glass-input" required placeholder="Jane">
+              </div>
+              <div class="input-group" style="flex:1;">
+                <label>Last Name</label>
+                <input type="text" class="glass-input" required placeholder="Doe">
+              </div>
+          </div>
+
+          <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" class="glass-input" required placeholder="jane.doe@example.com">
+          </div>
+          
+          <div class="input-group">
+            <label>Inquiry Type</label>
+            <select class="glass-input" style="background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-muted); padding: 0.8rem; border-radius: 4px;">
+                <option value="general">General Support</option>
+                <option value="school">School Partnerships</option>
+                <option value="press">Press & Media</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Message</label>
+            <textarea class="glass-input" rows="4" required placeholder="How can we help you?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Send Message</button>
+        </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo" style="height: 45px; margin-bottom: 1.5rem;">
+        <p style="font-size: 0.9rem;">Architecting the next generation of space pioneers.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SpaceMinds. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/starfield.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Events | SpaceMinds</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/glassmorphism.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <style>
+    .event-card {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 3rem;
+      padding: 2rem; margin-bottom: 2rem; background: transparent;
+      border: 1px solid var(--border-subtle); border-radius: 4px;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .event-card:hover { transform: translateX(5px); border-color: var(--text-primary); background: rgba(255,255,255,0.02); }
+    .event-date { min-width: 80px; text-align: center; border-right: 1px solid var(--border-subtle); padding-right: 2rem; }
+    .event-date h2 { margin:0; font-size: 2.2rem; font-weight: 500; }
+    .event-date span { display: block; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary);}
+    .event-info { flex-grow: 1; }
+    .event-info h3 { margin-bottom: 0.5rem; font-size: 1.25rem; font-weight: 500;}
+    .event-icon { width: 50px; height: 50px; opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <canvas id="starfield-canvas"></canvas>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo"></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="programs.html">Programs</a>
+        <a href="workshops.html" class="active">Workshops</a>
+        <a href="store.html">Store</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; margin-left: 1rem;">Sign In</a>
+      </div>
+      <button class="mobile-menu-btn">☰</button>
+    </div>
+  </nav>
+
+  <section class="section-padding container" style="padding-top: 150px; min-height: 80vh;">
+    <div class="text-center reveal mb-5">
+      <h1>Live After-School Events</h1>
+      <p style="max-width: 600px; margin: 0 auto;">Hang out online with students across the country. Participate in live challenges, coding sprints, and Q&A panels with real scientists.</p>
+    </div>
+
+    <div class="reveal" style="max-width: 900px; margin: 0 auto;">
+      
+      <div class="event-card">
+        <div class="event-date"><h2>14</h2><span>Nov</span></div>
+        <img src="assets/images/ai_satellite.png" onerror="this.style.display='none'" class="event-icon" style="border-radius: 50%; object-fit: cover;">
+        <div class="event-info">
+          <h3>Artemis Base Camp Mockup</h3>
+          <p style="margin-bottom: 0; font-size: 0.95rem;">Team up to decide where NASA should build the next lunar base using real maps.</p>
+        </div>
+        <button class="btn btn-secondary open-reg-modal">Register</button>
+      </div>
+
+      <div class="event-card">
+        <div class="event-date"><h2>22</h2><span>Nov</span></div>
+        <div class="event-icon" style="font-size: 2rem; text-align: center; line-height: 50px;">☄</div>
+        <div class="event-info">
+          <h3>Coding: Identify Constellations in Python</h3>
+          <p style="margin-bottom: 0; font-size: 0.95rem;">A fun, beginner-friendly introduction to coding with Python by analyzing star maps.</p>
+        </div>
+        <button class="btn btn-primary open-reg-modal">Register</button>
+      </div>
+
+      <div class="event-card">
+        <div class="event-date"><h2>05</h2><span>Dec</span></div>
+        <img src="assets/images/rocket_sleek.png" onerror="this.style.display='none'" class="event-icon" style="border-radius: 50%; object-fit: cover;">
+        <div class="event-info">
+          <h3>Ask an Engineer: Mars Rovers</h3>
+          <p style="margin-bottom: 0; font-size: 0.95rem;">Voice chat directly with an engineer who helped build a drone that flew on Mars.</p>
+        </div>
+        <button class="btn btn-secondary open-reg-modal">Register</button>
+      </div>
+
+      <div class="event-card">
+        <div class="event-date"><h2>19</h2><span>Dec</span></div>
+        <div class="event-icon" style="font-size: 2rem; text-align: center; line-height: 50px;">⧉</div>
+        <div class="event-info">
+          <h3>3D Printing 101: CubeSats</h3>
+          <p style="margin-bottom: 0; font-size: 0.95rem;">Learn how to use software to design a 3D printable satellite component from scratch.</p>
+        </div>
+        <button class="btn btn-secondary open-reg-modal">Register</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Registration Modal -->
+  <div class="modal-overlay" id="reg-modal">
+    <div class="modal-content">
+      <button class="close-modal" id="close-modal">&times;</button>
+      
+      <div id="reg-form-container">
+        <h2 style="margin-bottom: 2rem;">Workshop Registration</h2>
+        <form id="reg-form">
+          <div class="input-group">
+            <label>Your Name</label>
+            <input type="text" class="glass-input" required placeholder="John Doe">
+          </div>
+          <div class="input-group">
+            <label>Your Email Address</label>
+            <input type="email" class="glass-input" required placeholder="john@example.com">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Confirm Seat</button>
+        </form>
+      </div>
+
+      <div id="reg-success" class="success-message">
+        <h3 style="font-size: 2rem;">✅ Registered!!</h3>
+        <p>We will contact you soon with the video link and instructions.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo" style="height: 45px; margin-bottom: 1.5rem;">
+        <p style="font-size: 0.95rem;">Inspiring the next generation of space pioneers.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SpaceMinds. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/starfield.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    // Modal Logic
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('reg-modal');
+      const closeBtn = document.getElementById('close-modal');
+      const regForm = document.getElementById('reg-form');
+      const formContainer = document.getElementById('reg-form-container');
+      const successMsg = document.getElementById('reg-success');
+      
+      document.querySelectorAll('.open-reg-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+          modal.classList.add('active');
+          formContainer.style.display = 'block';
+          successMsg.style.display = 'none';
+          regForm.reset();
+        });
+      });
+
+      closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+      regForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        formContainer.style.display = 'none';
+        successMsg.style.display = 'block';
+      });
+    });
+  </script>
+</body>
+</html>

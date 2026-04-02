@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpaceMinds | High School Aerospace Platform</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/glassmorphism.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <style>
+    .hero-split { display: flex; align-items: center; justify-content: space-between; gap: 4rem; min-height: 90vh; padding-top: 100px; }
+    .hero-text { flex: 1.2; }
+    .hero-image { flex: 0.8; text-align: center; }
+    .hero-image img { width: 100%; border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+    @media (max-width: 768px) { .hero-split { flex-direction: column; text-align: center; justify-content: center; padding-top: 120px;} }
+    
+    .glow-bg {
+        position: absolute; width: 400px; height: 400px; 
+        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+        top: -100px; left: -100px; border-radius: 50%; z-index: -1; pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starfield-canvas"></canvas>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo"></a>
+      <div class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="programs.html">Programs</a>
+        <a href="workshops.html">Workshops</a>
+        <a href="store.html">Store</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; margin-left: 1rem;">Sign In</a>
+      </div>
+      <button class="mobile-menu-btn">☰</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="container hero-split">
+    <div class="hero-text reveal">
+      <div class="glass-badge mb-2">High School STEM Program</div>
+      <h1 class="glow-text">Launch Your Future in Aerospace Before College.</h1>
+      <p style="margin-top: 1.5rem; margin-bottom: 2.5rem; max-width: 550px;">
+        SpaceMinds gives high school students elite, hands-on engineering challenges. Build physical rovers, track real NASA data, and master aerospace concepts alongside students from around the globe.
+      </p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="programs.html" class="btn btn-primary">Start a Program</a>
+        <a href="auth.html" class="btn btn-secondary">Create Student Profile</a>
+      </div>
+    </div>
+    <div class="hero-image reveal-right delay-200">
+      <img src="assets/images/rocket_sleek.png" alt="Sleek Modern Rocket Ascending">
+    </div>
+  </section>
+
+  <!-- High School Optimization: Extra Home Page Content -->
+  <section class="section-padding" style="position:relative; overflow: hidden; background: rgba(255,255,255,0.01); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+    <div class="glow-bg" style="top: -200px; left: 50%; transform: translateX(-50%);"></div>
+    <div class="container text-center reveal mb-5">
+      <h2>Your Path to the Stars</h2>
+      <p style="max-width: 600px; margin: 0 auto;">High school isn't just prep—it's when innovation begins. Choose your track and join a crew.</p>
+    </div>
+
+    <!-- Addition of 3 extra cards for rich content density -->
+    <div class="container grid-container reveal" style="gap: 2rem;">
+      <div class="glass-panel text-center">
+        <div style="font-size: 3rem; margin-bottom:1rem; opacity:0.8;">🪐</div>
+        <div class="content">
+          <h3>The Robotics League</h3>
+          <p>Compete nationally by building and programming an autonomous rover.</p>
+        </div>
+      </div>
+      <div class="glass-panel text-center" style="border-color: rgba(255,255,255,0.2);">
+        <div style="font-size: 3rem; margin-bottom:1rem; opacity:0.8;">🛰️</div>
+        <div class="content">
+          <h3>Satellite Telemetry</h3>
+          <p>Learn to pull data directly from Low Earth Orbit weather satellites.</p>
+        </div>
+      </div>
+      <div class="glass-panel text-center">
+        <div style="font-size: 3rem; margin-bottom:1rem; opacity:0.8;">🌌</div>
+        <div class="content">
+          <h3>Astrophysics 101</h3>
+          <p>Math that actually matters: Calculate orbit insertions and escape velocity.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Expanded Benefits Section -->
+  <section class="section-padding container">
+    <div class="glow-bg" style="right: -200px; left: auto; top: 100px;"></div>
+    <div class="text-center reveal mb-5">
+      <h2>Why Join SpaceMinds?</h2>
+      <p>Build a college application portfolio that stands out.</p>
+    </div>
+    
+    <div class="grid-container">
+      <div class="glass-panel reveal-left">
+        <div class="content">
+          <h3 style="display:flex; align-items:center; gap:10px;"><span style="font-size:1.5rem;">👨‍🏫</span> Real Mentors</h3>
+          <p>Forget reading boring textbooks. Take interactive live workshops with professionals who build real rockets.</p>
+        </div>
+      </div>
+      <div class="glass-panel reveal">
+        <div class="content">
+          <h3 style="display:flex; align-items:center; gap:10px;"><span style="font-size:1.5rem;">🎒</span> Hands-on Kits</h3>
+          <p>We ship actual engineering kits to your house. You'll solder, code, and test real hardware engines.</p>
+        </div>
+      </div>
+      <div class="glass-panel reveal-right">
+        <div class="content">
+          <h3 style="display:flex; align-items:center; gap:10px;"><span style="font-size:1.5rem;">🏆</span> Scholarships</h3>
+          <p>Top students in our modules earn grants and direct pathways to top university engineering programs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Banner -->
+  <section class="section-padding">
+    <div class="container text-center reveal" style="padding: 5rem 2rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-muted); border-radius: 8px;">
+      <h2 style="font-size: 2.5rem;">Ready to Launch?</h2>
+      <p style="margin-bottom: 2.5rem;">Thousands of high school students are already building the future.</p>
+      <a href="auth.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 3rem;">Create Free Account</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <a href="index.html" style="display:inline-block; margin-bottom: 1.5rem;">
+          <img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo" style="height: 45px;">
+        </a>
+        <p style="font-size: 0.95rem;">Inspiring the next generation of space pioneers with premium STEM modeling targeted for high school ambition.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="programs.html">Programs</a></li>
+          <li><a href="workshops.html">Workshops</a></li>
+          <li><a href="store.html">Store</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Organization</h4>
+        <ul class="footer-links">
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">School Partnerships</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SpaceMinds. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/starfield.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

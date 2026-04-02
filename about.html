@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Us | SpaceMinds</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/glassmorphism.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <style>
+    .about-split { display: flex; align-items: center; gap: 4rem; margin-top: 3rem; }
+    .about-text { flex: 1; }
+    .about-image { flex: 1; position: relative; }
+    .about-image img { border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 4rem; }
+    @media (max-width: 768px) {
+      .about-split { flex-direction: column; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starfield-canvas"></canvas>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo"></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="programs.html">Programs</a>
+        <a href="workshops.html">Workshops</a>
+        <a href="store.html">Store</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html" class="active">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; margin-left: 1rem;">Sign In</a>
+      </div>
+      <button class="mobile-menu-btn">☰</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="section-padding container" style="padding-top: 150px;">
+    <div class="about-split reveal">
+      <div class="about-text">
+        <h1 class="mb-2">Our Mission</h1>
+        <p>
+          SpaceMinds is built by former propulsion engineers, software architects, and educators. We believe that waiting until college to dive into real aerospace engineering is a massive missed opportunity for curious teenagers.
+        </p>
+        <p>
+          We provide high schoolers globally with physical hardware and university-grade curriculum. Our goal is to forge the next generation of pioneers who will solve the toughest challenges in space exploration.
+        </p>
+      </div>
+      <div class="about-image">
+        <!-- Glowing backend drop shadow -->
+        <div style="position:absolute; width:100%; height:100%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); top:0; left:0; pointer-events:none; z-index:-1;"></div>
+        <img src="assets/images/astronaut_minimal.png" alt="Astronaut in Space" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Values -->
+  <section class="section-padding" style="background: rgba(255,255,255,0.01); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+    <div class="container reveal">
+      <h2 class="text-center mb-5">Our Core Values</h2>
+      <div class="philosophy-grid">
+        <div class="glass-panel" style="padding: 2.5rem;">
+          <h3 style="color: var(--accent-light);">1. Physical Reality</h3>
+          <p style="font-size: 0.95rem;">Screens are not enough. We prioritize sending real mechanical components, circuits, and sensors to students so they can touch what they build.</p>
+        </div>
+        <div class="glass-panel" style="padding: 2.5rem;">
+          <h3 style="color: var(--accent-light);">2. Uncapped Potential</h3>
+          <p style="font-size: 0.95rem;">We do not dumb down physics. If a 15-year-old can learn Python, they can learn how to calculate an orbital sequence. We trust student ambition.</p>
+        </div>
+        <div class="glass-panel" style="padding: 2.5rem;">
+          <h3 style="color: var(--accent-light);">3. Absolute Accessibility</h3>
+          <p style="font-size: 0.95rem;">You do not need to live near Cape Canaveral to make a difference. Our live classes and digital tools bring elite aerospace mentors directly into your home.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Educational Philosophy & History -->
+  <section class="section-padding container">
+    <div class="about-split reveal" style="align-items: flex-start; gap: 6rem;">
+      <div style="flex:1;">
+        <h2>The Educational Flaw</h2>
+        <p style="margin-top: 1rem;">
+          Standard high school STEM often consists of textbook equations devoid of context. Students memorize formulas without understanding that the exact same math is used daily to keep satellites from falling out of the sky.
+        </p>
+        <p>
+          At SpaceMinds, every equation is attached to a real problem. When we teach geometry, we use it to calculate the fuel volume of a fuel tank. If we teach circuits, you solder the receiver board for a CubeSat. Context is king.
+        </p>
+      </div>
+      <div style="flex:1;">
+        <h2>Our History</h2>
+        <div style="margin-top: 2rem; border-left: 1px solid var(--border-muted); padding-left: 2rem;">
+          <div style="margin-bottom: 3rem; position: relative;">
+            <div style="position: absolute; left: -38px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--text-primary);"></div>
+            <h3>2023 - Architecture</h3>
+            <p style="font-size: 0.95rem;">Initial curriculum drafted by Stanford alumni; first Rover hardware prototype tested.</p>
+          </div>
+          <div style="margin-bottom: 3rem; position: relative;">
+            <div style="position: absolute; left: -38px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--text-secondary);"></div>
+            <h3 style="color: var(--text-secondary);">2025 - Alpha Testing</h3>
+            <p style="font-size: 0.95rem;">Shipped Beta testing kits to 50 public high schools across North America to perfect the build guides.</p>
+          </div>
+          <div style="position: relative;">
+            <div style="position: absolute; left: -38px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--text-secondary);"></div>
+            <h3 style="color: var(--text-secondary);">2026 - Global Access</h3>
+            <p style="font-size: 0.95rem;">The SpaceMinds platform launches for all international students.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Partnerships -->
+  <section class="section-padding">
+    <div class="container text-center reveal">
+      <h2 style="margin-bottom: 3rem;">University & Agency Partnerships</h2>
+      <p style="max-width: 600px; margin: 0 auto 4rem;">We actively maintain pipelines with aerospace engineering departments across top universities to ensure our scholars are recognized.</p>
+      
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 4rem; opacity: 0.6;">
+        <span style="font-size: 1.5rem; font-weight: 500; font-family: monospace;">[TECH _ INS]</span>
+        <span style="font-size: 1.5rem; font-weight: 500; font-family: monospace;">AERO.GLOBAL</span>
+        <span style="font-size: 1.5rem; font-weight: 500; font-family: monospace;">ASTRO CORP</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo" style="height: 45px; margin-bottom: 1.5rem;">
+        <p style="font-size: 0.9rem;">Architecting the next generation of space pioneers.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 SpaceMinds. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/starfield.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

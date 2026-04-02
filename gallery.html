@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gallery | SpaceMinds</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/glassmorphism.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <style>
+    .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; margin-top: 4rem; }
+    .gallery-item { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease; }
+    .gallery-item:hover { transform: translateY(-5px) scale(1.02); border-color: #ffffff; }
+    
+    .svg-container {
+      width: 100%; height: 350px; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.08), transparent 70%);
+      border-bottom: 1px solid var(--border-subtle); pointer-events: none;
+    }
+    .svg-container svg { width: 60%; height: 60%; }
+
+    /* Lightbox Modal CSS */
+    .lightbox-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+    }
+    .lightbox-overlay.active { opacity: 1; pointer-events: all; }
+    
+    .lightbox-wrapper {
+      width: 90vw; height: 85vh; max-width: 1400px; display: flex; gap: 2rem;
+    }
+
+    .lightbox-content {
+      flex-grow: 1; height: 100%; display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.2); background: radial-gradient(circle at center, rgba(255,255,255,0.1), transparent 80%);
+      border-radius: 12px; position: relative; box-shadow: 0 0 50px rgba(0,200,255,0.1);
+    }
+    
+    /* Center the active SVG */
+    #svg-mount { width: 70%; height: 70%; display: flex; align-items: center; justify-content: center; }
+    #svg-mount svg { width: 100%; height: 100%; filter: drop-shadow(0 0 30px rgba(255,255,255,0.3)); }
+    
+    /* Interactive SVG Elements */
+    .svg-interactive {
+      cursor: pointer;
+      transition: filter 0.2s, stroke-width 0.2s;
+    }
+    .svg-interactive:hover {
+      filter: drop-shadow(0 0 15px var(--accent-light));
+    }
+
+    /* New Data Panel */
+    .holo-info-panel {
+      width: 350px; height: 100%; background: rgba(0,10,20,0.8); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px; padding: 2rem; display: flex; flex-direction: column; overflow-y: auto;
+      backdrop-filter: blur(10px);
+    }
+    .holo-info-panel h3 { font-size: 1.2rem; color: var(--accent-light); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;}
+    .data-row { display: flex; justify-content: space-between; margin-bottom: 0.8rem; font-family: monospace; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.3rem;}
+    .data-row span:first-child { color: var(--text-secondary); }
+    .data-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-top: 1.5rem; transition: color 0.3s; }
+    .data-desc.highlight { color: #ffffff; }
+
+    /* Control Panel inside Hologram */
+    .hologram-controls {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.3);
+      padding: 1rem 2rem; border-radius: 50px; display: flex; gap: 1rem; align-items: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+    }
+    .hologram-controls button, .hologram-controls input {
+      background: #ffffff; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold; cursor: pointer;
+    }
+    .hologram-controls button:hover { background: #dddddd; }
+
+    .lightbox-close { position: absolute; top: 1.5rem; right: 2rem; background: none; border: none; color: #ffffff; font-size: 2.5rem; cursor: pointer; transition: 0.2s; z-index: 100;}
+    .lightbox-close:hover { color: rgba(255,255,255,0.5); transform: scale(1.1); }
+    
+    .lightbox-header { position: absolute; top: 2rem; left: 3rem; }
+    .lightbox-header h2 { font-size: 2rem; color: #ffffff; letter-spacing: 2px; margin-bottom: 0; }
+    .lightbox-header p { color: var(--accent-light); font-family: monospace; font-size: 0.9rem; }
+
+    /* Custom Input Slider */
+    input[type=range] { -webkit-appearance: none; background: transparent; width: 150px; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #ffffff; cursor: pointer; margin-top: -6px; }
+    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.3); border-radius: 2px; }
+
+    /* Screen shake / Ignition Effects */
+    @keyframes ignitionShake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+    .ignited { animation: ignitionShake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite; }
+
+    @media (max-width: 900px) { 
+      .gallery-grid { grid-template-columns: 1fr; } 
+      .lightbox-wrapper { flex-direction: column; }
+      .holo-info-panel { width: 100%; height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starfield-canvas"></canvas>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo"></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="programs.html">Programs</a>
+        <a href="workshops.html">Workshops</a>
+        <a href="store.html">Store</a>
+        <a href="gallery.html" class="active">Gallery</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; margin-left: 1rem;">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="container" style="padding-top: 150px; padding-bottom: 100px;">
+    
+    <div class="text-center mb-5" style="opacity: 1 !important;">
+      <h1>Interactive Schematics</h1>
+      <p>Click any card to engage the holographic blueprint simulation.</p>
+    </div>
+
+    <!-- Gallery Selection Grid -->
+    <div class="gallery-grid" style="opacity: 1 !important; transform: none !important;">
+      
+      <!-- 1: Orbital Mechanics -->
+      <div class="gallery-item" onclick="openHologram('orbital')">
+        <div class="svg-container">
+          <svg viewBox="0 0 200 200" fill="none">
+            <circle cx="100" cy="100" r="20" fill="rgba(255,255,255,0.9)"/>
+            <ellipse cx="100" cy="100" rx="70" ry="70" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="5 5"/>
+          </svg>
+        </div>
+        <div style="padding: 1.5rem;">
+          <h3>Orbital Mechanics</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">Interactive eccentricity vectors.</p>
+        </div>
+      </div>
+
+      <!-- 2: Planetary Robotics -->
+      <div class="gallery-item" onclick="openHologram('rover')">
+        <div class="svg-container">
+          <svg viewBox="0 0 200 200" fill="none">
+            <rect x="40" y="80" width="120" height="35" rx="6" fill="rgba(255,255,255,0.15)" stroke="#ffffff" stroke-width="3"/>
+            <circle cx="60" cy="130" r="18" fill="rgba(255,255,255,0.7)"/>
+            <circle cx="140" cy="130" r="18" fill="rgba(255,255,255,0.7)"/>
+            <rect x="90" y="50" width="8" height="30" fill="#ffffff"/>
+            <path d="M 10 148 L 190 148" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-dasharray="10 5"/>
+          </svg>
+        </div>
+        <div style="padding: 1.5rem;">
+           <h3>Planetary Robotics</h3>
+           <p style="font-size: 0.9rem; color: var(--text-secondary);">Automated module deployment.</p>
+        </div>
+      </div>
+
+      <!-- 3: Space Habitats -->
+      <div class="gallery-item" onclick="openHologram('lunar')">
+        <div class="svg-container">
+          <svg viewBox="0 0 240 200" fill="none">
+            <path d="M 40 160 C 40 90, 200 90, 200 160" fill="rgba(255,255,255,0.1)" stroke="#ffffff" stroke-width="3"/>
+            <rect x="100" y="100" width="40" height="60" rx="4" fill="rgba(255,255,255,0.3)"/>
+            <rect x="110" y="110" width="20" height="10" fill="rgba(0,0,0,0.8)"/>
+            <path d="M 10 160 Q 120 150 230 160" stroke="#ffffff" stroke-width="3" fill="none"/>
+          </svg>
+        </div>
+        <div style="padding: 1.5rem;">
+           <h3>Lunar Base Architecture</h3>
+           <p style="font-size: 0.9rem; color: var(--text-secondary);">Simulate environmental shifts (Eclipse mode).</p>
+        </div>
+      </div>
+
+      <!-- 4: Thermodynamic Engines -->
+      <div class="gallery-item" onclick="openHologram('engine')">
+        <div class="svg-container">
+          <svg viewBox="0 0 200 200" fill="none">
+            <path d="M 60 80 Q 100 100 70 160 L 130 160 Q 100 100 140 80 Z" fill="rgba(255,255,255,0.15)" stroke="#ffffff" stroke-width="3"/>
+            <rect x="80" y="30" width="40" height="50" rx="6" fill="rgba(255,255,255,0.95)"/>
+            <path d="M 80 40 C 50 40, 50 90, 80 90" stroke="rgba(255,255,255,0.6)" stroke-width="4" fill="none"/>
+            <path d="M 120 50 C 150 50, 150 100, 120 100" stroke="rgba(255,255,255,0.6)" stroke-width="4" fill="none"/>
+          </svg>
+        </div>
+        <div style="padding: 1.5rem;">
+           <h3>Thermodynamic Engines</h3>
+           <p style="font-size: 0.9rem; color: var(--text-secondary);">Ignite main propulsion arrays.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive Static Hologram Overlay -->
+  <div class="lightbox-overlay" id="lightbox">
+    <button class="lightbox-close" onclick="closeHologram()">&times;</button>
+    <div class="lightbox-wrapper" id="hologram-wrapper">
+      
+      <!-- Graphic Display -->
+      <div class="lightbox-content">
+        <div class="lightbox-header">
+          <h2 id="holo-title">Sys__Title</h2>
+          <p id="holo-status">STATUS: STANDBY</p>
+        </div>
+
+        <!-- SVG Logic gets mounted strictly inside here, so buttons don't break -->
+        <div id="svg-mount"></div>
+
+        <div class="hologram-controls" id="holo-controls"></div>
+      </div>
+
+      <!-- Live Data Panel -->
+      <div class="holo-info-panel" id="holo-info">
+        <h3>Telemetry Data</h3>
+        <!-- JS Injects Details -->
+      </div>
+
+    </div>
+  </div>
+
+  <script src="assets/js/starfield.js"></script>
+  
+  <script>
+    const lightbox = document.getElementById('lightbox');
+    const svgMount = document.getElementById('svg-mount');
+    const titleEl = document.getElementById('holo-title');
+    const statusEl = document.getElementById('holo-status');
+    const controls = document.getElementById('holo-controls');
+    const infoPanel = document.getElementById('holo-info');
+
+    // --- Interactive Schema Definitions ---
+    
+    const schemaOrbital = `
+      <svg id="svg-orbital" viewBox="0 0 200 200" fill="none" style="pointer-events:all;">
+        <circle id="central-mass" class="svg-interactive" cx="100" cy="100" r="15" fill="rgba(255,255,255,0.9)"/>
+        <ellipse id="orbit-ring" class="svg-interactive" cx="100" cy="100" rx="70" ry="70" stroke="rgba(255,255,255,0.8)" stroke-width="8" stroke-dasharray="10 5" style="transition: all 0.2s;"/>
+        <circle id="sat-node" class="svg-interactive" cx="170" cy="100" r="12" fill="#00c8ff" style="transition: all 0.2s; filter: drop-shadow(0 0 10px #00c8ff);"/>
+        <path id="measure-line" d="M 100 100 L 170 100" stroke="#ffffff" stroke-width="1" stroke-dasharray="2 2" opacity="0.5" style="transition: all 0.1s;"/>
+      </svg>
+    `;
+
+    const schemaRover = `
+      <svg id="svg-rover" viewBox="0 0 200 200" fill="none" style="pointer-events:all;">
+        <!-- Left Solar Array -->
+        <g id="solar-left-group" class="svg-interactive" style="cursor:pointer;">
+            <rect id="solar-left" x="40" y="80" width="30" height="0" fill="rgba(0,100,255,0.5)" stroke="#ffffff" stroke-width="1" style="transition: all 1s cubic-bezier(.5,-0.5,.5,1.5); transform-origin: top; transform: rotate(180deg) scaleY(0);"/>
+        </g>
+        <!-- Right Solar Array -->
+        <g id="solar-right-group" class="svg-interactive" style="cursor:pointer;">
+            <rect id="solar-right" x="130" y="80" width="30" height="0" fill="rgba(0,100,255,0.5)" stroke="#ffffff" stroke-width="1" style="transition: all 1s cubic-bezier(.5,-0.5,.5,1.5) 0.2s; transform-origin: top; transform: rotate(180deg) scaleY(0);"/>
+        </g>
+        
+        <rect id="main-chassis" class="svg-interactive" x="40" y="80" width="120" height="35" rx="6" fill="rgba(255,255,255,0.15)" stroke="#ffffff" stroke-width="3"/>
+        <circle cx="60" cy="130" r="18" fill="rgba(255,255,255,0.7)"/>
+        <circle cx="100" cy="130" r="18" fill="rgba(255,255,255,0.7)"/>
+        <circle cx="140" cy="130" r="18" fill="rgba(255,255,255,0.7)"/>
+        
+        <g id="mast-group" class="svg-interactive" style="transition: transform 1.5s ease; transform: translateY(30px);">
+           <rect x="90" y="20" width="8" height="60" fill="#ffffff"/>
+           <rect x="80" y="10" width="28" height="15" rx="4" fill="#ffffff" filter="drop-shadow(0 0 10px rgba(255,255,255,0.5))"/>
+        </g>
+        
+        <rect x="40" y="80" width="120" height="15" fill="#020306" style="pointer-events:none;"/>
+        <rect x="40" y="80" width="120" height="35" rx="6" fill="none" class="svg-interactive" stroke="#ffffff" stroke-width="3"/>
+        <path d="M 10 148 L 190 148" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-dasharray="10 5"/>
+      </svg>
+    `;
+
+    const schemaLunar = `
+      <svg id="svg-lunar" viewBox="0 0 240 200" fill="none" style="pointer-events:all;">
+        <circle id="lunar-sun" class="svg-interactive" cx="200" cy="40" r="25" fill="rgba(255,255,255,0.8)" style="transition: all 2s ease; filter: drop-shadow(0 0 30px #ffffff);"/>
+        <path d="M 40 160 C 40 70, 200 70, 200 160" fill="rgba(255,255,255,0.05)" stroke="#ffffff" stroke-width="3"/>
+        <rect id="main-hab" class="svg-interactive" x="100" y="100" width="40" height="60" rx="4" fill="rgba(255,255,255,0.8)"/>
+        <rect id="window-1" x="110" y="110" width="20" height="8" rx="2" fill="#000000" style="transition: fill 0.5s ease;"/>
+        <rect id="window-2" x="110" y="125" width="20" height="8" rx="2" fill="#000000" style="transition: fill 0.5s ease;"/>
+        <rect id="window-3" x="110" y="140" width="20" height="8" rx="2" fill="#000000" style="transition: fill 0.5s ease;"/>
+        
+        <g id="solar-group" class="svg-interactive">
+            <rect x="10" y="130" width="50" height="15" fill="rgba(255,255,255,0.4)"/>
+            <rect x="180" y="130" width="50" height="15" fill="rgba(255,255,255,0.4)"/>
+        </g>
+        
+        <path d="M 10 160 Q 120 150 230 160" stroke="#ffffff" stroke-width="3" fill="none"/>
+      </svg>
+    `;
+
+    const schemaEngine = `
+      <svg id="svg-engine" viewBox="0 0 200 200" fill="none" style="pointer-events:all;">
+        <path id="plasma-flame" d="M 70 160 Q 100 280 130 160 Z" fill="url(#flameGradient)" style="transform-origin: top; transform: scaleY(0); transition: transform 0.2s cubic-bezier(.17,.67,.83,.67); opacity:0;"/>
+        <path id="plasma-core" d="M 85 160 Q 100 220 115 160 Z" fill="#ffffff" style="transform-origin: top; transform: scaleY(0); transition: transform 0.1s; opacity:0; blur(2px);"/>
+        
+        <path id="engine-bell" class="svg-interactive" d="M 60 80 Q 100 100 70 160 L 130 160 Q 100 100 140 80 Z" fill="rgba(255,255,255,0.1)" stroke="#ffffff" stroke-width="4"/>
+        
+        <rect id="chamber" class="svg-interactive" x="75" y="30" width="50" height="50" rx="6" fill="#ffffff"/>
+        
+        <g id="fuel-lines" class="svg-interactive">
+             <path d="M 75 40 C 40 40, 40 90, 75 90" stroke="rgba(255,255,255,0.6)" stroke-width="6" fill="none"/>
+             <path d="M 125 50 C 160 50, 160 100, 125 100" stroke="rgba(255,255,255,0.6)" stroke-width="6" fill="none"/>
+        </g>
+        <defs>
+          <linearGradient id="flameGradient" x1="100" y1="160" x2="100" y2="280">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="30%" stop-color="#00aaff"/>
+            <stop offset="100%" stop-color="rgba(0,0,255,0)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    `;
+
+    // State Variables
+    let currentInterval = null;
+
+    // Helper to change side panel text based on hover interaction
+    function showDesc(text) {
+        const descEl = document.getElementById('data-desc-box');
+        if(!descEl) return;
+        descEl.innerText = text;
+        descEl.classList.add('highlight');
+    }
+    function resetDesc(defaultText) {
+        const descEl = document.getElementById('data-desc-box');
+        if(!descEl) return;
+        descEl.innerText = defaultText;
+        descEl.classList.remove('highlight');
+    }
+
+    function openHologram(type) {
+      lightbox.classList.add('active');
+      clearInterval(currentInterval);
+
+      if (type === 'orbital') {
+        titleEl.innerText = "ORBITAL MECHANICS";
+        statusEl.innerText = "SYS: AWAITING INPUT (ECCENTRICITY)";
+        
+        const defaultText = "Modify the eccentricity slider to observe how stretching the orbital ellipse drastically recalculates the necessary Delta-V energy requirements for orbital insertion. You can also click the orbital ring to forcefully expand the orbit.";
+        
+        infoPanel.innerHTML = `
+            <h3>Telemetry Data</h3>
+            <div class="data-row"><span>Central Body Mass</span><span>5.972 × 10^24 kg</span></div>
+            <div class="data-row"><span>Periapsis</span><span>400 km</span></div>
+            <div class="data-row"><span>Apoapsis (Live)</span><span id="data-apo">400 km</span></div>
+            <div class="data-row"><span>Delta-V Req</span><span id="data-d>v">0 m/s</span></div>
+            <p class="data-desc" id="data-desc-box">${defaultText}</p>
+        `;
+
+        svgMount.innerHTML = schemaOrbital;
+        controls.innerHTML = `
+          <label style="color:#fff; font-size:0.9rem;">Eccentricity</label>
+          <input type="range" id="orbit-slider" min="0" max="80" value="0">
+        `;
+        
+        const slider = document.getElementById('orbit-slider');
+        const orbit = document.getElementById('orbit-ring');
+        const sat = document.getElementById('sat-node');
+        const line = document.getElementById('measure-line');
+        const centralMass = document.getElementById('central-mass');
+
+        // Direct SVG Interaction: Orbital
+        centralMass.onmouseover = () => showDesc("CENTRAL MASS: Creates the gravitational well that the satellite orbits in. Earth operates at 1G.");
+        centralMass.onmouseout = () => resetDesc(defaultText);
+
+        orbit.onmouseover = () => showDesc("ORBITAL RING: The mathematically plotted trajectory of the payload. Click it to increase eccentricity!");
+        orbit.onmouseout = () => resetDesc(defaultText);
+        
+        sat.onmouseover = () => showDesc("SATELLITE PAYLOAD: Blue node marks the current position. Note how it shifts to apoapsis when the orbit morphs.");
+        sat.onmouseout = () => resetDesc(defaultText);
+
+        let orbitClickVal = 0;
+        orbit.onclick = () => {
+            orbitClickVal += 20;
+            if(orbitClickVal > 80) orbitClickVal = 0;
+            slider.value = orbitClickVal;
+            slider.dispatchEvent(new Event('input')); // Trigger update Math
+        };
+
+        slider.addEventListener('input', (e) => {
+          const val = parseInt(e.target.value);
+          orbitClickVal = val;
+          orbit.setAttribute('rx', 70 + val);
+          orbit.setAttribute('cx', 100 + (val/2));
+          
+          let apoX = 170 + val*1.5;
+          sat.setAttribute('cx', apoX);
+          line.setAttribute('d', 'M 100 100 L ' + apoX + ' 100');
+
+          statusEl.innerText = 'SYS: e=0.' + val + ' | APOAPSIS SHIFT';
+          
+          document.getElementById('data-apo').innerText = (400 + val*150) + " km";
+          document.getElementById('data-d>v').innerText = (val*12.5).toFixed(1) + " m/s";
+
+          if(val > 50) statusEl.style.color = "#ff4444";
+          else statusEl.style.color = "var(--accent-light)";
+        });
+
+      } else if (type === 'rover') {
+        titleEl.innerText = "PLANETARY ROBOTICS";
+        statusEl.innerText = "SYS: ROVER STOWED";
+
+        const defaultText = "The primary rover chassis utilizes dual folding solar arrays. Click the 'Initiate Deployment' button to engage arrays, or click directly on the folded solar arrays on the blueprint to unfurl them.";
+
+        infoPanel.innerHTML = `
+            <h3>Telemetry Data</h3>
+            <div class="data-row"><span>Battery Status</span><span id="data-bat">STANDBY</span></div>
+            <div class="data-row"><span>Solar Array</span><span id="data-pow">STOWED</span></div>
+            <div class="data-row"><span>LiDAR</span><span id="data-lidar">OFFLINE</span></div>
+            <div class="data-row"><span>Tread Grip</span><span>94%</span></div>
+            <p class="data-desc" id="data-desc-box">${defaultText}</p>
+        `;
+
+        svgMount.innerHTML = schemaRover;
+        controls.innerHTML = `<button id="deploy-btn">INITIATE DEPLOYMENT</button>`;
+        
+        let deployed = false;
+        
+        const slGroup = document.getElementById('solar-left-group');
+        const srGroup = document.getElementById('solar-right-group');
+        const mast = document.getElementById('mast-group');
+        const chassis = document.getElementById('main-chassis');
+
+        // Direct SVG Interaction: Rover
+        chassis.onmouseover = () => showDesc("MAIN CHASSIS: Contains the core processing unit and battery cells. Highly insulated to protect from absolute zero temperatures.");
+        chassis.onmouseout = () => resetDesc(defaultText);
+
+        const solarHover = () => showDesc("SOLAR ARRAY: Primary power intake. Click to manually deploy the solar panels now!");
+        slGroup.onmouseover = solarHover; slGroup.onmouseout = () => resetDesc(defaultText);
+        srGroup.onmouseover = solarHover; srGroup.onmouseout = () => resetDesc(defaultText);
+        
+        mast.onmouseover = () => showDesc("LIDAR MAST: Requires deployment. Used for 3D topological mapping of the terrain for pathfinding algorithms.");
+        mast.onmouseout = () => resetDesc(defaultText);
+
+        const toggleDeploy = () => {
+          deployed = !deployed;
+          const sl = document.getElementById('solar-left');
+          const sr = document.getElementById('solar-right');
+          const mast = document.getElementById('mast-group');
+          
+          if(deployed) {
+             sl.style.transform = "rotate(0deg) scaleY(1)";
+             sl.setAttribute('height', '50'); sl.setAttribute('y', '30');
+             sr.style.transform = "rotate(0deg) scaleY(1)";
+             sr.setAttribute('height', '50'); sr.setAttribute('y', '30'); 
+             mast.style.transform = "translateY(0px)";
+             
+             statusEl.innerText = "SYS: ROVER DEPLOYED (POWER NOMINAL)";
+             statusEl.style.color = "#00ff88";
+             document.getElementById('deploy-btn').innerText = "STOW MODULES";
+
+             document.getElementById('data-bat').innerText = "CHARGING";
+             document.getElementById('data-pow').innerText = "1.2kW ACTIVE";
+             document.getElementById('data-lidar').innerText = "SCANNING...";
+          } else {
+             sl.style.transform = "rotate(180deg) scaleY(0)";
+             sr.style.transform = "rotate(180deg) scaleY(0)";
+             mast.style.transform = "translateY(30px)";
+             
+             statusEl.innerText = "SYS: ROVER STOWED";
+             statusEl.style.color = "var(--accent-light)";
+             document.getElementById('deploy-btn').innerText = "INITIATE DEPLOYMENT";
+             
+             document.getElementById('data-bat').innerText = "STANDBY";
+             document.getElementById('data-pow').innerText = "STOWED";
+             document.getElementById('data-lidar').innerText = "OFFLINE";
+          }
+        };
+
+        document.getElementById('deploy-btn').addEventListener('click', toggleDeploy);
+        // Bind the exact same deploy mechanic to clicking the raw SVG arrays!
+        slGroup.onclick = toggleDeploy;
+        srGroup.onclick = toggleDeploy;
+
+      } else if (type === 'lunar') {
+        titleEl.innerText = "LUNAR HABITAT";
+        statusEl.innerText = "SYS: SOLAR POWER ACTIVE";
+
+        const defaultText = "The habitat requires constant telemetry. If an eclipse drops solar array output, the bioluminescent emergency backup and battery arrays must handle full load. Try clicking the sun!";
+
+        infoPanel.innerHTML = `
+            <h3>Telemetry Data</h3>
+            <div class="data-row"><span>Internal Pressure</span><span>14.7 psi</span></div>
+            <div class="data-row"><span>Radiation Level</span><span id="data-rad">0.1 mSv</span></div>
+            <div class="data-row"><span>Array Output</span><span id="data-solar">NOMINAL</span></div>
+            <div class="data-row"><span>Life Support</span><span>STABLE</span></div>
+            <p class="data-desc" id="data-desc-box">${defaultText}</p>
+        `;
+
+        svgMount.innerHTML = schemaLunar;
+        controls.innerHTML = `<button id="eclipse-btn">SIMULATE LUNAR ECLIPSE</button>`;
+        
+        let eclipse = false;
+
+        const sun = document.getElementById('lunar-sun');
+        const hab = document.getElementById('main-hab');
+        const solarGroup = document.getElementById('solar-group');
+        
+        // Direct SVG Interaction: Lunar
+        sun.onmouseover = () => showDesc("SOLAR SOURCE: The sun provides life-giving energy to the base. Click the sun to instantly trigger a catastrophic Eclipse!");
+        sun.onmouseout = () => resetDesc(defaultText);
+
+        hab.onmouseover = () => showDesc("LUNAR HABITAT: Pressurized to 14.7psi to mimic Earth sea level. Contains bioluminescent emergency systems.");
+        hab.onmouseout = () => resetDesc(defaultText);
+
+        solarGroup.onmouseover = () => showDesc("SOLAR ARRAYS: Primary power generation. Will shut down automatically during Eclipse events.");
+        solarGroup.onmouseout = () => resetDesc(defaultText);
+
+
+        const toggleEclipse = () => {
+          eclipse = !eclipse;
+          const w1 = document.getElementById('window-1');
+          const w2 = document.getElementById('window-2');
+          const w3 = document.getElementById('window-3');
+
+          if(eclipse) {
+            sun.setAttribute('cy', '180');
+            sun.style.fill = "rgba(255,0,0,0.2)"; 
+            
+            setTimeout(() => w1.style.fill = "#00c8ff", 1000);
+            setTimeout(() => w2.style.fill = "#00c8ff", 1200);
+            setTimeout(() => w3.style.fill = "#00c8ff", 1400);
+
+            statusEl.innerText = "SYS: ECLIPSE DETECTED. BATTERY ENGAGED.";
+            statusEl.style.color = "#00c8ff";
+            document.getElementById('eclipse-btn').innerText = "RESTORE SUNLIGHT";
+            
+            document.getElementById('data-solar').innerText = "0.0kW FATAL";
+            document.getElementById('data-rad').innerText = "0 mSv";
+          } else {
+            sun.setAttribute('cy', '40');
+            sun.style.fill = "rgba(255,255,255,0.8)";
+            w1.style.fill = "#000000"; w2.style.fill = "#000000"; w3.style.fill = "#000000";
+            
+            statusEl.innerText = "SYS: SOLAR POWER ACTIVE";
+            statusEl.style.color = "var(--accent-light)";
+            document.getElementById('eclipse-btn').innerText = "SIMULATE LUNAR ECLIPSE";
+
+            document.getElementById('data-solar').innerText = "NOMINAL";
+            document.getElementById('data-rad').innerText = "0.1 mSv";
+          }
+        };
+
+        document.getElementById('eclipse-btn').addEventListener('click', toggleEclipse);
+        // Make the sun clickable to trigger Eclipse
+        sun.onclick = toggleEclipse;
+
+      } else if (type === 'engine') {
+        titleEl.innerText = "THERMO-PROPULSION";
+        statusEl.innerText = "SYS: IGNITION STANDBY";
+
+        const defaultText = "Thermodynamic analysis of a liquid bi-propellant engine. Ignite the system to monitor the extreme spikes in chamber pressure and temperature. You can click the engine bell to view structural integrity details.";
+
+        infoPanel.innerHTML = `
+            <h3>Telemetry Data</h3>
+            <div class="data-row"><span>Chamber Temp</span><span id="data-temp">20°C</span></div>
+            <div class="data-row"><span>Chamber Pressure</span><span id="data-pres">1 atm</span></div>
+            <div class="data-row"><span>Fuel Ratio (M)</span><span>2.56</span></div>
+            <div class="data-row"><span>Specific Impulse</span><span id="data-isp">0 s</span></div>
+            <p class="data-desc" id="data-desc-box">${defaultText}</p>
+        `;
+
+        svgMount.innerHTML = schemaEngine;
+        controls.innerHTML = `<button id="ignite-btn" style="background:var(--accent-light); border: 2px solid #ff0000;">COMMENCE IGNITION</button>`;
+        
+        let ignited = false;
+
+        const engineBell = document.getElementById('engine-bell');
+        const chamber = document.getElementById('chamber');
+        const fuelLines = document.getElementById('fuel-lines');
+
+        // Direct SVG Interaction: Engine
+        engineBell.onmouseover = () => showDesc("ENGINE NOZZLE: Directs the expanding high-temperature plasma to optimize exhaust velocity and thrust efficiency.");
+        engineBell.onmouseout = () => resetDesc(defaultText);
+
+        chamber.onmouseover = () => showDesc("COMBUSTION CHAMBER: Where the magic happens. Temperatures will exceed 3,000°C upon ignition.");
+        chamber.onmouseout = () => resetDesc(defaultText);
+
+        fuelLines.onmouseover = () => showDesc("PROPELLANT FEED LINES: Liquid Oxygen (LOX) and Kerosene run extremely cold through these pipes.");
+        fuelLines.onmouseout = () => resetDesc(defaultText);
+
+        const btn = document.getElementById('ignite-btn');
+
+        const triggerIgnition = () => {
+          ignited = true;
+          lightbox.classList.add('ignited'); 
+          
+          const flame = document.getElementById('plasma-flame');
+          const core = document.getElementById('plasma-core');
+          flame.style.opacity = '1';
+          flame.style.transform = 'scaleY(1.5)';
+          core.style.opacity = '1';
+          core.style.transform = 'scaleY(1.2)';
+
+          statusEl.innerText = "SYS: MAX THRUST (WARNING: EXTREME HEAT)";
+          statusEl.style.color = "#ff4444";
+          btn.innerText = "HOLDING TO BURN...";
+
+          document.getElementById('data-temp').innerText = "3,200°C";
+          document.getElementById('data-pres').innerText = "120 atm";
+          document.getElementById('data-isp').innerText = "340 s";
+          
+          currentInterval = setInterval(() => {
+             const randScale = 1.1 + (Math.random() * 0.4);
+             core.style.transform = 'scaleY(' + randScale + ')';
+          }, 50);
+        };
+
+        const triggerCutoff = () => {
+          if(!ignited) return;
+          ignited = false;
+          lightbox.classList.remove('ignited');
+          clearInterval(currentInterval);
+
+          const flame = document.getElementById('plasma-flame');
+          const core = document.getElementById('plasma-core');
+          flame.style.opacity = '0';
+          flame.style.transform = 'scaleY(0)';
+          core.style.opacity = '0';
+          core.style.transform = 'scaleY(0)';
+
+          statusEl.innerText = "SYS: IGNITION STANDBY (COOLING)";
+          statusEl.style.color = "var(--accent-light)";
+          btn.innerText = "COMMENCE IGNITION";
+
+          document.getElementById('data-temp').innerText = "80°C";
+          document.getElementById('data-pres').innerText = "1 atm";
+          document.getElementById('data-isp').innerText = "0 s";
+        };
+
+        btn.addEventListener('mousedown', triggerIgnition);
+        btn.addEventListener('mouseup', triggerCutoff);
+        btn.addEventListener('mouseleave', triggerCutoff);
+
+        // Make chamber clickable to ignite without the button
+        chamber.onmousedown = triggerIgnition;
+        chamber.onmouseup = triggerCutoff;
+        chamber.onmouseleave = triggerCutoff;
+      }
+    }
+
+    function closeHologram() {
+      lightbox.classList.remove('active');
+      lightbox.classList.remove('ignited');
+      clearInterval(currentInterval);
+      setTimeout(() => { controls.innerHTML = ''; infoPanel.innerHTML=''; svgMount.innerHTML = ''; }, 400);
+    }
+  </script>
+</body>
+</html>
