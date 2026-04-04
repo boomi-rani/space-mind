@@ -108,6 +108,8 @@
       .holo-info-panel { width: 100%; height: auto; }
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
   <canvas id="starfield-canvas"></canvas>
@@ -121,9 +123,11 @@
         <a href="workshops.html">Workshops</a>
         <a href="store.html">Store</a>
         <a href="gallery.html" class="active">Gallery</a>
+        <a href="mission-control.html">Mission Control</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
         <a href="auth.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; margin-left: 1rem;">Sign In</a>
+        <button id="theme-toggle" class="btn" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: transparent; color: inherit; border-radius: 4px; cursor:pointer;" title="Cleanroom Mode">🔆</button>
       </div>
       <button class="mobile-menu-btn">☰</button>
     </div>
@@ -203,6 +207,18 @@
       </div>
 
     </div>
+
+    <!-- 5: Advanced 3D CAD -->
+    <div class="gallery-item" onclick="openHologram('threejs-cad')" style="grid-column: 1 / -1; max-width: 500px; margin: 0 auto; width: 100%;">
+      <div class="svg-container" style="color: #fff; font-size: 3rem;">
+        <div style="text-align:center;">🕋<br><span style="font-size:1rem;">True 3D WebGL</span></div>
+      </div>
+      <div style="padding: 1.5rem; text-align: center;">
+         <h3>Advanced 3D Hardware</h3>
+         <p style="font-size: 0.9rem; color: var(--text-secondary);">Interactive 360° rendering using Three.js.</p>
+      </div>
+    </div>
+
   </section>
 
   <!-- Interactive Static Hologram Overlay -->
@@ -647,6 +663,89 @@
         chamber.onmousedown = triggerIgnition;
         chamber.onmouseup = triggerCutoff;
         chamber.onmouseleave = triggerCutoff;
+      } else if (type === 'threejs-cad') {
+        titleEl.innerText = "PROCEDURAL SATELLITE CAD";
+        statusEl.innerText = "SYS: WEBGL ACTIVE. CLICK & DRAG";
+
+        const defaultText = "Rotate the procedural 3D model using your mouse. WebGL rendering offers high-fidelity visual representations of spacecraft modules directly in the browser.";
+
+        infoPanel.innerHTML = `
+            <h3>Telemetry Data</h3>
+            <div class="data-row"><span>Tri-Count</span><span>12,042</span></div>
+            <div class="data-row"><span>Material Map</span><span>PBR Standard</span></div>
+            <div class="data-row"><span>Render Engine</span><span>Three.js WebGL</span></div>
+            <p class="data-desc" id="data-desc-box">${defaultText}</p>
+        `;
+
+        controls.innerHTML = `<button style="opacity:0.5; cursor: default;">3D SPACE ACTIVATED</button>`;
+        
+        // Setup Three.js
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(400, 400); // Fixed size inside the mount
+        svgMount.innerHTML = '';
+        svgMount.appendChild(renderer.domElement);
+
+        const controls3D = new THREE.OrbitControls(camera, renderer.domElement);
+        controls3D.enableDamping = true;
+        controls3D.autoRotate = true;
+        
+        // Add Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(5, 10, 7);
+        scene.add(dirLight);
+
+        // Build Procedural Satellite
+        const group = new THREE.Group();
+        
+        // Core Body
+        const bodyGeo = new THREE.CylinderGeometry(1, 1, 3, 32);
+        const bodyMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8, roughness: 0.2 });
+        const body = new THREE.Mesh(bodyGeo, bodyMat);
+        group.add(body);
+        
+        // Solar Panel Left
+        const panelGeo = new THREE.BoxGeometry(4, 0.1, 1.5);
+        const panelMat = new THREE.MeshStandardMaterial({ color: 0x0055ff, metalness: 0.9, roughness: 0.1 });
+        const panelL = new THREE.Mesh(panelGeo, panelMat);
+        panelL.position.set(-3, 0, 0);
+        group.add(panelL);
+        
+        // Solar Panel Right
+        const panelR = new THREE.Mesh(panelGeo, panelMat);
+        panelR.position.set(3, 0, 0);
+        group.add(panelR);
+        
+        // Dish Antenna
+        const dishGeo = new THREE.SphereGeometry(0.8, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        const dishMat = new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+        const dish = new THREE.Mesh(dishGeo, dishMat);
+        dish.position.set(0, 1.5, 0);
+        group.add(dish);
+
+        scene.add(group);
+        camera.position.z = 6;
+
+        let animationId;
+        const animate = function () {
+          animationId = requestAnimationFrame(animate);
+          controls3D.update();
+          renderer.render(scene, camera);
+        };
+        animate();
+        
+        // Attach cleanup function to interval var so closeHologram stops animation
+        currentInterval = setInterval(()=>{}, 9999);
+        const oldClear = clearInterval;
+        clearInterval = function(id) {
+           if(id === currentInterval) {
+              cancelAnimationFrame(animationId);
+           }
+           oldClear(id);
+        };
       }
     }
 

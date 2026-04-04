@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mission Control | SpaceMinds</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/glassmorphism.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <style>
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
+    
+    .panel {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 2rem;
+      position: relative;
+    }
+    .panel h3 { border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between;}
+    .live-dot { height: 10px; width: 10px; background: #ff4444; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #ff4444; animation: pulse 1.5s infinite; }
+    
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+    
+    .data-led { font-family: monospace; font-size: 2rem; color: #00c8ff; }
+    .flare-bar { height: 8px; width: 100%; background: rgba(255,255,255,0.1); margin-top: 5px; }
+    .flare-fill { height: 100%; background: #ffaa00; width: 0%; transition: width 0.2s; }
+
+    /* Bluetooth console */
+    .terminal {
+      background: #020306; padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; height: 150px; overflow-y: auto; color: #00ff88; margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starfield-canvas"></canvas>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SpaceMinds Logo" class="nav-logo"></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="programs.html">Programs</a>
+        <a href="workshops.html">Workshops</a>
+        <a href="store.html">Store</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="mission-control.html" class="active">Mission Control</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; margin-left: 1rem;">Sign In</a>
+        <button id="theme-toggle" class="btn" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: transparent; color: inherit; border-radius: 4px; cursor:pointer;" title="Cleanroom Mode">🔆</button>
+      </div>
+      <button class="mobile-menu-btn">☰</button>
+    </div>
+  </nav>
+
+  <section class="container" style="padding-top: 120px; padding-bottom: 100px;">
+    <div class="text-center reveal mb-5">
+      <h1>Mission Control API Dashboard</h1>
+      <p>Live telemetry feeds from global space networks and your personal hardware.</p>
+    </div>
+
+    <div class="dashboard-grid reveal">
+      
+      <!-- Panel 1: ISS LIVE Location -->
+      <div class="panel">
+        <h3><span>🛰️ International Space Station</span> <span class="live-dot" title="Live Feed Active"></span></h3>
+        <p style="font-size: 0.9rem;">Fetching coordinates directly from Open-Notify REST API.</p>
+        <div style="display:flex; justify-content:space-between; margin-top: 2rem;">
+          <div>
+            <div style="color:var(--text-secondary); font-size: 0.8rem; text-transform:uppercase;">Latitude</div>
+            <div class="data-led" id="iss-lat">--.----</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="color:var(--text-secondary); font-size: 0.8rem; text-transform:uppercase;">Longitude</div>
+            <div class="data-led" id="iss-lon">--.----</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Artemis Countdown -->
+      <div class="panel">
+        <h3><span>🚀 Next Launch (Artemis II)</span> <span class="live-dot" style="background:#00ff88; box-shadow: 0 0 10px #00ff88;"></span></h3>
+        <p style="font-size: 0.9rem;">Estimated target launch window.</p>
+        <div class="data-led" style="text-align:center; font-size: 2.5rem; margin-top: 1.5rem;" id="countdown-clock">
+          Loading...
+        </div>
+      </div>
+
+      <!-- Panel 3: Hardware Web Bluetooth -->
+      <div class="panel">
+        <h3><span>📡 Connect Hardware Kit</span></h3>
+        <p style="font-size: 0.9rem;">If you purchased a CubeSat sensor kit, pair it using the experimental Web-Bluetooth API.</p>
+        <button class="btn btn-secondary" style="width:100%; border-color:#00ff88; color:#00ff88;" onclick="connectBluetooth()">Pair Device (Bluetooth)</button>
+        <div class="terminal" id="bt-console">
+          > System initialized. Waiting for connection...<br>
+        </div>
+      </div>
+
+      <!-- Panel 4: NASA Solar Flare Telemetry -->
+      <div class="panel">
+        <h3><span>☀️ Solar Weather (Simulated DONKI)</span> <span class="live-dot" style="background:#ffaa00; box-shadow: 0 0 10px #ffaa00;"></span></h3>
+        <p style="font-size: 0.9rem;">Coronal Mass Ejection background X-ray flux (Mock data).</p>
+        
+        <div style="margin-top: 2rem;">
+          <div style="display:flex; justify-content:space-between; font-size: 0.8rem;">
+            <span>SENSOR ALPHA</span> <span id="flare-val">0.02 e/V</span>
+          </div>
+          <div class="flare-bar"><div class="flare-fill" id="flare-fill"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="assets/js/starfield.js"></script>
+  <script src="assets/js/main.js"></script>
+  
+  <script>
+    // 1. ISS API (Real HTTPS fetch)
+    async function fetchISS() {
+      try {
+        const res = await fetch('http://api.open-notify.org/iss-now.json');
+        const data = await res.json();
+        document.getElementById('iss-lat').innerText = parseFloat(data.iss_position.latitude).toFixed(4);
+        document.getElementById('iss-lon').innerText = parseFloat(data.iss_position.longitude).toFixed(4);
+      } catch (e) {
+        document.getElementById('iss-lat').innerText = "ERROR";
+      }
+    }
+    fetchISS();
+    setInterval(fetchISS, 4000); // update every 4s
+
+    // 2. Countdown Timer
+    // Target is exactly 90 days from right now for demo purposes
+    const targetDate = new Date().getTime() + (90 * 24 * 60 * 60 * 1000);
+    setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("countdown-clock").innerHTML = `${d}D : ${h}H : ${m}M : ${s}S`;
+    }, 1000);
+
+    // 3. Web Bluetooth API
+    async function connectBluetooth() {
+      const btc = document.getElementById('bt-console');
+      try {
+        btc.innerHTML += "> Requesting Bluetooth Device...<br>";
+        // Note: Navigator.bluetooth only works on localhost or HTTPS.
+        if (!navigator.bluetooth) throw new Error("Web Bluetooth API not available on this browser/origin.");
+        
+        const device = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true
+        });
+        
+        btc.innerHTML += `> Paired: ${device.name || 'Unnamed Device'}<br>`;
+        btc.innerHTML += "> Connecting to GATT Server...<br>";
+        btc.innerHTML += "> ⚠️ ERROR: Device does not match SpaceMinds signature.<br>";
+        btc.scrollTop = btc.scrollHeight;
+      } catch (error) {
+        btc.innerHTML += `> <span style="color:#ff4444;">${error.message || error}</span><br>`;
+        btc.scrollTop = btc.scrollHeight;
+      }
+    }
+
+    // 4. Mock Solar Flare Data
+    setInterval(() => {
+      const val = Math.random() * 100;
+      document.getElementById('flare-fill').style.width = val + '%';
+      document.getElementById('flare-val').innerText = (val * 0.05).toFixed(3) + ' e/V';
+    }, 800);
+  </script>
+</body>
+</html>

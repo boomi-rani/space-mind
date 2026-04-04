@@ -47,4 +47,22 @@ document.addEventListener('DOMContentLoaded', () => {
   
   window.addEventListener('scroll', revealOnScroll);
   revealOnScroll(); // Trigger once on load
+
+  // Cleanroom Mode (Light Theme Toggle)
+  const themeToggle = document.getElementById('theme-toggle');
+  if (themeToggle) {
+    // Check saved preference
+    if (localStorage.getItem('theme') === 'light-mode') {
+      document.body.classList.add('light-mode');
+    }
+    
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      if (document.body.classList.contains('light-mode')) {
+        localStorage.setItem('theme', 'light-mode');
+      } else {
+        localStorage.setItem('theme', 'dark-mode');
+      }
+    });
+  }
 });
