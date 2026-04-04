@@ -96,9 +96,9 @@ img { max-width: 100%; height: auto; display: block; border-radius: 6px; }
   background: rgba(2, 3, 6, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-subtle);
 }
-.nav-container { display: flex; justify-content: space-between; align-items: center; width: 90%; max-width: 1200px; margin: auto; }
+.nav-container { display: flex; justify-content: space-between; align-items: center; width: 95%; max-width: 1300px; margin: auto; }
 .logo { display: flex; align-items: center; }
-.nav-links { display: flex; gap: 2.5rem; align-items: center; }
+.nav-links { display: flex; gap: 1.5rem; align-items: center; }
 .nav-links a { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); transition: 0.2s;}
 .nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
 .mobile-menu-btn { display: none; font-size: 1.5rem; color: var(--accent-light); cursor: pointer; background:none; border:none; }
@@ -135,7 +135,7 @@ footer { background: var(--bg-primary); border-top: 1px solid var(--border-subtl
 .success-message h3 { color: var(--accent-light); margin-bottom: 1rem;}
 
 /* Media Queries */
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
   .nav-links {
     position: absolute; top: 100%; left: 0; width: 100%; flex-direction: column;
     background: rgba(2, 3, 6, 0.95); backdrop-filter: blur(20px);

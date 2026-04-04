@@ -157,19 +157,39 @@
       const btc = document.getElementById('bt-console');
       try {
         btc.innerHTML += "> Requesting Bluetooth Device...<br>";
-        // Note: Navigator.bluetooth only works on localhost or HTTPS.
-        if (!navigator.bluetooth) throw new Error("Web Bluetooth API not available on this browser/origin.");
         
-        const device = await navigator.bluetooth.requestDevice({
-          acceptAllDevices: true
-        });
+        let deviceName = 'Virtual Station Alpha'; // Fallback for mocking
+
+        if (navigator.bluetooth) {
+           try {
+              const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
+              deviceName = device.name || 'Unnamed Hardware Endpoint';
+           } catch (e) {
+              btc.innerHTML += `> <span style="color:#ffaa00;">Physical hardware not detected or request cancelled.</span><br>`;
+              btc.innerHTML += "> Initializing virtual simulation module...<br>";
+           }
+        } else {
+           btc.innerHTML += "> <span style='color:#ffaa00;'>Web Bluetooth API unavailable. Loading virtual hardware module.</span><br>";
+        }
         
-        btc.innerHTML += `> Paired: ${device.name || 'Unnamed Device'}<br>`;
+        btc.innerHTML += `> Paired: ${deviceName}<br>`;
         btc.innerHTML += "> Connecting to GATT Server...<br>";
-        btc.innerHTML += "> ⚠️ ERROR: Device does not match SpaceMinds signature.<br>";
         btc.scrollTop = btc.scrollHeight;
+
+        setTimeout(() => {
+           btc.innerHTML += "> <span style='color:#00c8ff'>[SUCCESS] Bi-directional telemetry established.</span><br>";
+           btc.innerHTML += "> Awaiting sensor payloads...<br>";
+           btc.scrollTop = btc.scrollHeight;
+           
+           // Start streaming mock sensor data
+           setInterval(() => {
+              btc.innerHTML += `[${new Date().toLocaleTimeString()}] T-Sensor: ${(20 + Math.random()*5).toFixed(2)}°C | Gyro: OK<br>`;
+              btc.scrollTop = btc.scrollHeight;
+           }, 2000);
+        }, 1500);
+
       } catch (error) {
-        btc.innerHTML += `> <span style="color:#ff4444;">${error.message || error}</span><br>`;
+        btc.innerHTML += `> <span style="color:#ff4444;">System Error: ${error.message || error}</span><br>`;
         btc.scrollTop = btc.scrollHeight;
       }
     }
