@@ -161,23 +161,16 @@
       try {
         btc.innerHTML += "> Requesting Bluetooth Device...<br>";
         
-        let deviceName = 'Virtual Station Alpha'; // Fallback for mocking
+        let deviceName = 'Virtual Station Alpha (Simulation)';
 
-        if (navigator.bluetooth) {
-           try {
-              const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
-              deviceName = device.name || 'Unnamed Hardware Endpoint';
-           } catch (e) {
-              btc.innerHTML += `> <span style="color:#ffaa00;">Physical hardware not detected or request cancelled.</span><br>`;
-              btc.innerHTML += "> Initializing virtual simulation module...<br>";
-           }
-        } else {
-           btc.innerHTML += "> <span style='color:#ffaa00;'>Web Bluetooth API unavailable. Loading virtual hardware module.</span><br>";
-        }
-        
-        btc.innerHTML += `> Paired: ${deviceName}<br>`;
-        btc.innerHTML += "> Connecting to GATT Server...<br>";
-        btc.scrollTop = btc.scrollHeight;
+        // Mocking hardware detection delay
+        setTimeout(() => {
+           btc.innerHTML += `> <span style="color:#ffaa00;">Physical hardware bypass active.</span><br>`;
+           btc.innerHTML += "> Initializing virtual simulation module...<br>";
+           btc.innerHTML += `> Paired: ${deviceName}<br>`;
+           btc.innerHTML += "> Connecting to Virtual GATT Server...<br>";
+           btc.scrollTop = btc.scrollHeight;
+        }, 800);
 
         setTimeout(() => {
            btc.style.display = 'none';
