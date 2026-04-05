@@ -124,6 +124,7 @@
 
   <script src="assets/js/starfield.js"></script>
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/spacecraft.js"></script>
   
   <script>
     // 1. ISS API (Real HTTPS fetch)
@@ -197,32 +198,24 @@
            dirLight.position.set(2, 5, 5);
            scene.add(dirLight);
 
-           const group = new THREE.Group();
-           
-           const baseGeo = new THREE.BoxGeometry(2, 0.5, 3);
-           const baseMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.2 });
-           const base = new THREE.Mesh(baseGeo, baseMat);
-           group.add(base);
-
-           const sensorGeo = new THREE.CylinderGeometry(0.5, 0.5, 1, 16);
-           const sensorMat = new THREE.MeshStandardMaterial({ color: 0x00ff88, emissive: 0x00ff88, emissiveIntensity: 0.3 });
-           const sensor = new THREE.Mesh(sensorGeo, sensorMat);
-           sensor.position.set(0, 0.75, 0);
-           group.add(sensor);
-           
+           const group = window.createRealisticSpacecraft ? window.createRealisticSpacecraft(THREE) : new THREE.Group();
            scene.add(group);
-           camera.position.z = 4;
+           
+           camera.position.z = 5;
            camera.position.y = 2;
 
            const overlay = document.createElement('div');
            overlay.style.position = 'absolute';
            overlay.style.top = '10px'; overlay.style.left = '10px';
            overlay.style.color = '#00ff88'; overlay.style.fontFamily = 'monospace'; overlay.style.fontSize = '0.85rem';
-           overlay.innerHTML = "LINK ESTABLISHED<br>Virtual Hardware Online...<br><span id='sim-temp'>T-Sensor: --</span>";
+           overlay.innerHTML = "LINK ESTABLISHED<br>High-Gain Telemetry Online...<br><span id='sim-temp'>T-Sensor: --</span>";
            mount.appendChild(overlay);
 
+           const clock = new THREE.Clock();
            const animate = function () {
              requestAnimationFrame(animate);
+             const time = clock.getElapsedTime();
+             if (group.tick) group.tick(time);
              controls3D.update();
              renderer.render(scene, camera);
            };
@@ -230,7 +223,6 @@
 
            setInterval(() => {
               document.getElementById('sim-temp').innerText = `T-Sensor: ${(20 + Math.random()*5).toFixed(2)}°C`;
-              sensor.material.emissiveIntensity = 0.3 + Math.random() * 0.5;
            }, 1000);
         }, 1500);
 
